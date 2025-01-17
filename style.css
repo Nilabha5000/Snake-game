@@ -1,0 +1,16 @@
+body{
+    display: flex;
+    background-color: bisque;
+    flex-wrap: wrap;
+}
+
+ 
+#window{
+    background-color: white;
+    position: absolute;
+    top :50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    height: 700px;
+    width : 1000px;
+}
