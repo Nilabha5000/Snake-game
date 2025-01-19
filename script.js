@@ -36,27 +36,51 @@ class SnakeBody{
 }
 
 class Fruit{
-    constructor(head,x,y){
+    constructor(Sbody,x,y){
         this.x = x;
         this.y = y;
-        this.head = head;
+        this.Sbody = Sbody;
         this.size = 50;
     }
     
     isEaten(){
         return (
-            this.head.x < this.x + this.size &&
-            this.head.x + this.size > this.x &&
-            this.head.y < this.y + this.size &&
-            this.head.y + this.size > this.y
+            this.Sbody[0].x < this.x + this.size &&
+            this.Sbody[0].x + this.size > this.x &&
+            this.Sbody[0].y < this.y + this.size &&
+            this.Sbody[0].y + this.size > this.y
         );
     }
 
     update(){
 
         if(this.isEaten()){
-            this.x = Math.floor(Math.random() * Window.width-50);
-            this.y = Math.floor(Math.random() * (Window.height - 50) + 50);
+            do {
+                this.x = Math.floor(Math.random() * (Window.width - 50));
+                this.y = Math.floor(Math.random() * (Window.height - 50)) + 50;
+            } while (this.Sbody.some(segment => 
+                segment.x < this.x + this.size &&
+                segment.x + this.size > this.x &&
+                segment.y < this.y + this.size &&
+                segment.y + this.size > this.y
+            ));
+            let lastSegment = this.Sbody[this.Sbody.length-1];
+            let obj = new SnakeBody(lastSegment.x,lastSegment.y,"green");
+            if(lastSegment.velocityX === -2){
+                obj.x = lastSegment.x-50;
+            }
+            else if(lastSegment.velocityX === 2){
+                obj.x = lastSegment.x+50;
+            }
+            else if(lastSegment.velocityY === -2){
+                obj.y = lastSegment.y-50;
+            }
+            else if(lastSegment.velocityY === 2){
+                obj.y = lastSegment.y+50;
+            }
+            obj.velocityX = lastSegment.velocityX;
+            obj.velocityY = lastSegment.velocityY;
+            this.Sbody.push(obj);
             score++;
         }
     }
@@ -66,25 +90,46 @@ class Fruit{
     }
 }
 
-let snakeTail = [new SnakeBody(Window.width/2,Window.height/2,"green")];
-let fruit = new Fruit(snakeTail[0],snakeTail[0].x, snakeTail[0].y-70);
-document.addEventListener("keyup",(event)=>{
+let snakeTail = [new SnakeBody(Window.width/2,Window.height/2,"blue")];
+let fruit = new Fruit(snakeTail,snakeTail[0].x, snakeTail[0].y-70);
+
+function updateSnakeBody(){
+    for(let i = snakeTail.length-1; i > 0; --i){
+        snakeTail[i].x = snakeTail[i - 1].x;
+        snakeTail[i].y = snakeTail[i - 1].y;
+
+        snakeTail[i].velocityX = snakeTail[i-1].velocityX;
+        snakeTail[i].velocityY = snakeTail[i-1].velocityY;
+    }
+}
+window.addEventListener("keyup",(event)=>{
+    let head = snakeTail[0];
+    if(event.key === 'w' || event.key === 's' || event.key === 'a' || event.key === 'd'){
+        updateSnakeBody();
+    }
     switch(event.key){
         case 'w':
-            snakeTail[0].velocityX = 0;
-            snakeTail[0].velocityY = -2;
+           
+               
+               head.velocityX = 0;
+               head.velocityY = -2;
+           
         break;
         case 's':
-            snakeTail[0].velocityX = 0;
-            snakeTail[0].velocityY = 2;
-        break;
+                head.velocityX = 0;
+                head.velocityY = 2;
+            break;
+
+           
         case 'a':
-            snakeTail[0].velocityX = -2;
-            snakeTail[0].velocityY = 0;
+                head.velocityX = -2;
+                head.velocityY = 0;
+            
         break;
         case 'd':
-            snakeTail[0].velocityX = 2;
-            snakeTail[0].velocityY = 0;
+                head.velocityX = 2;
+                head.velocityY = 0;
+            
         break;
 
     }
@@ -94,11 +139,15 @@ function animate(){
     ctx.clearRect(0,0,Window.width, Window.height);
     ctx.fillStyle = "black";
     ctx.fillText("Score : "+score,10,30);
-    snakeTail[0].update();
-    snakeTail[0].draw();
+   snakeTail[0].update();
+    snakeTail.forEach((segment)=>{
+        segment.draw();
+    });
 
     fruit.update();
     fruit.draw();
     requestAnimationFrame(animate);
 }
 animate();
+
+//What is the problem in this code?
