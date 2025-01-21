@@ -90,8 +90,8 @@ class Fruit{
     }
 }
 
-let snakeTail = [new SnakeBody(Window.width/2,Window.height/2,"blue")];
-let fruit = new Fruit(snakeTail,snakeTail[0].x, snakeTail[0].y-70);
+let snakeTail = [new SnakeBody(Window.width/2,Window.height/2,"green")];
+let fruit = new Fruit(snakeTail,snakeTail[0].x+400, snakeTail[0].y-200);
 
 function updateSnakeBody(){
     for(let i = snakeTail.length-1; i > 0; --i){
@@ -105,6 +105,7 @@ function updateSnakeBody(){
 window.addEventListener("keyup",(event)=>{
     let head = snakeTail[0];
     if(event.key === 'w' || event.key === 's' || event.key === 'a' || event.key === 'd'){
+        head.update();
         updateSnakeBody();
     }
     switch(event.key){
@@ -112,42 +113,48 @@ window.addEventListener("keyup",(event)=>{
            
                
                head.velocityX = 0;
-               head.velocityY = -2;
+               head.velocityY = -25;
            
         break;
         case 's':
                 head.velocityX = 0;
-                head.velocityY = 2;
+                head.velocityY = 25;
             break;
 
            
         case 'a':
-                head.velocityX = -2;
+                head.velocityX = -25;
                 head.velocityY = 0;
             
         break;
         case 'd':
-                head.velocityX = 2;
+                head.velocityX = 25;
                 head.velocityY = 0;
             
         break;
 
     }
 });
-
+function checkCollision() {
+    let head = snakeTail[0];
+    for (let i = 1; i < snakeTail.length; i++) {
+        if (head.x === snakeTail[i].x && head.y === snakeTail[i].y) {
+            alert("Game Over! Final Score: " + score);
+            document.location.reload();
+        }
+    }
+}
 function animate(){
     ctx.clearRect(0,0,Window.width, Window.height);
     ctx.fillStyle = "black";
     ctx.fillText("Score : "+score,10,30);
-   snakeTail[0].update();
     snakeTail.forEach((segment)=>{
         segment.draw();
     });
-
+    if(snakeTail.length > 50)
+      checkCollision();
     fruit.update();
     fruit.draw();
     requestAnimationFrame(animate);
 }
 animate();
-
-//What is the problem in this code?
