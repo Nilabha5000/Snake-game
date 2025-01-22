@@ -5,7 +5,7 @@ Window.height = 700;
 ctx.font = '30px Arial'; // Font size and family
 ctx.textAlign = 'left'; // Align text to the left
 let score = 0;
-
+const eatSound = new Audio("sound/eat.mp3");
 class SnakeBody{
     constructor(x,y ,color){
         this.x = x;
@@ -82,7 +82,9 @@ class Fruit{
             obj.velocityY = lastSegment.velocityY;
             this.Sbody.push(obj);
             score++;
+            eatSound.play();
         }
+
     }
     draw(){
         ctx.fillStyle = "red";

@@ -1,15 +1,19 @@
 body{
     display: flex;
-    background-color: bisque;
-    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #6dd5fa, #2980b9); 
 }
 
  
 #window{
-    background-color: white;
+    background: #fff;
+    background-color: #f0f0f0;
+    border: 5px solid #000;
     position: absolute;
     top :50%;
     left: 50%;
+    box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.3);
     transform: translate(-50%,-50%);
     height: 700px;
     width : 1000px;
