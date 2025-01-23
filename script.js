@@ -57,7 +57,7 @@ class Fruit{
         if(this.isEaten()){
             do {
                 this.x = Math.floor(Math.random() * (Window.width - 50));
-                this.y = Math.floor(Math.random() * (Window.height - 50)) + 50;
+                this.y = Math.floor(Math.random() * (Window.height - 50));
             } while (this.Sbody.some(segment => 
                 segment.x < this.x + this.size &&
                 segment.x + this.size > this.x &&
@@ -65,17 +65,17 @@ class Fruit{
                 segment.y + this.size > this.y
             ));
             let lastSegment = this.Sbody[this.Sbody.length-1];
-            let obj = new SnakeBody(lastSegment.x,lastSegment.y,"green");
-            if(lastSegment.velocityX === -2){
+            let obj = new SnakeBody(lastSegment.x,lastSegment.y,"skyblue");
+            if(lastSegment.velocityX === -35){
                 obj.x = lastSegment.x-50;
             }
-            else if(lastSegment.velocityX === 2){
+            else if(lastSegment.velocityX === 35){
                 obj.x = lastSegment.x+50;
             }
-            else if(lastSegment.velocityY === -2){
+            else if(lastSegment.velocityY === -35){
                 obj.y = lastSegment.y-50;
             }
-            else if(lastSegment.velocityY === 2){
+            else if(lastSegment.velocityY === 35){
                 obj.y = lastSegment.y+50;
             }
             obj.velocityX = lastSegment.velocityX;
@@ -88,14 +88,23 @@ class Fruit{
     }
     draw(){
         ctx.fillStyle = "red";
-        ctx.fillRect(this.x ,this.y , 50 , 50);
+        ctx.beginPath();
+        ctx.arc(
+            this.x + this.size / 2,
+            this.y + this.size / 2, 
+            this.size / 2,          
+            0,                     
+            Math.PI * 2             
+        );
+        ctx.fill();
     }
 }
 
-let snakeTail = [new SnakeBody(Window.width/2,Window.height/2,"green")];
+let snakeTail = [new SnakeBody(Window.width/2,Window.height/2,"blue")];
 let fruit = new Fruit(snakeTail,snakeTail[0].x+400, snakeTail[0].y-200);
 
 function updateSnakeBody(){
+    let head = snakeTail[0];
     for(let i = snakeTail.length-1; i > 0; --i){
         snakeTail[i].x = snakeTail[i - 1].x;
         snakeTail[i].y = snakeTail[i - 1].y;
@@ -113,25 +122,34 @@ window.addEventListener("keyup",(event)=>{
     switch(event.key){
         case 'w':
            
-               
+            if(head.velocityY === 0){
                head.velocityX = 0;
-               head.velocityY = -25;
+               head.velocityY = -35;
+           }
            
         break;
         case 's':
+            if(head.velocityY === 0){
                 head.velocityX = 0;
-                head.velocityY = 25;
+                head.velocityY = 35;
+            }
+                
             break;
 
            
         case 'a':
-                head.velocityX = -25;
+            if(head.velocityX === 0){
+                head.velocityX = -35;
                 head.velocityY = 0;
+            }
             
         break;
         case 'd':
-                head.velocityX = 25;
+            if(head.velocityX === 0){
+                head.velocityX = 35;
                 head.velocityY = 0;
+            }
+               
             
         break;
 
@@ -140,9 +158,10 @@ window.addEventListener("keyup",(event)=>{
 function checkCollision() {
     let head = snakeTail[0];
     for (let i = 1; i < snakeTail.length; i++) {
-        if (head.x === snakeTail[i].x && head.y === snakeTail[i].y) {
-            alert("Game Over! Final Score: " + score);
-            document.location.reload();
+        if (head.x < snakeTail[i].x + 50 &&
+            head.x + 50 > snakeTail[i].x &&
+            head.y < snakeTail[i].y + 50 &&
+            head.y + 50 > snakeTail[i].y) {
         }
     }
 }
@@ -150,10 +169,11 @@ function animate(){
     ctx.clearRect(0,0,Window.width, Window.height);
     ctx.fillStyle = "black";
     ctx.fillText("Score : "+score,10,30);
-    snakeTail.forEach((segment)=>{
-        segment.draw();
-    });
-    if(snakeTail.length > 50)
+
+    for(let i = 1; i < snakeTail.length; ++i)
+          snakeTail[i].draw();
+    snakeTail[0].draw();
+    //if(snakeTail.length > 50)
       checkCollision();
     fruit.update();
     fruit.draw();
